@@ -9,7 +9,9 @@ import com.javanauta.agendadortarefas2.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +29,16 @@ public class TarefasService {
         TarefasEntity entity = tarefasConverter.paraTarefasEntity(dto);
 
         return tarefasConverter.paraTarefasDTO(tarefasRepository.save(entity));
+    }
+
+    public List<TarefasDTO> buscaTarefasAgendadasPorPeriodo(LocalDateTime dataInicial, LocalDateTime dataFinal){
+        return tarefasConverter.paraListaTarefasDTO(
+                tarefasRepository.findByDataEventoBetween(dataInicial, dataFinal));
+    }
+
+    public List<TarefasDTO> buscaTarefasPorEmail(String token){
+        String email = jwtUtil.extractEmailToken(token.substring(7));
+
+        return tarefasConverter.paraListaTarefasDTO(tarefasRepository.findByEmailUsuario(email));
     }
 }
